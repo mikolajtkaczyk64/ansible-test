@@ -2,9 +2,9 @@
   hosts: pvehosts
   tasks:
    - name: Return whoami to registered var
-   ansible.builtin.command: whoami
-   register: curruser
+     ansible.builtin.command: whoami
+     register: curruser
    - name: Print the current user
-   ansible.builtin.debug:
-      msg: Currently logged in as {{ curruser }}
-   when: curruser is defined
+     ansible.builtin.debug:
+       msg: Currently logged in as {{ curruser }}
+     when: curruser is defined
