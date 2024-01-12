@@ -4,7 +4,7 @@
    - name: Return whoami to registered var
    ansible.builtin.command: whoami
    register: curruser
-  - name: Print the current user
+   - name: Print the current user
    ansible.builtin.debug:
       msg: Currently logged in as {{ curruser }}
-    when: curruser is defined
+   when: curruser is defined
