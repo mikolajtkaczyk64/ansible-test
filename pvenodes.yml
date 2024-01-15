@@ -4,7 +4,7 @@
    - name: Return pvenodes to registered var
      ansible.builtin.command: pvesh get /nodes --output-format=yaml
      register: pvenodes
-   - name: Print the current user
+   - name: Display all cluster names
      ansible.builtin.debug:
-       msg: "Found nodes: {{ pvenodes.stdout | from_yaml}}"
-     when: pvenodes is defined
+       var: item
+     loop: "{{ pvenodes | community.general.json_query('[*].node') }}"
