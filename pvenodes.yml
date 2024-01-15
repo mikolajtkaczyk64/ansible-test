@@ -7,4 +7,4 @@
    - name: Display all cluster names
      ansible.builtin.debug:
        var: item
-     loop: "{{ pvenodes | community.general.json_query('[*].node') }}"
+     loop: "{{ pvenodes }}"
