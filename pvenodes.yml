@@ -2,9 +2,9 @@
   hosts: pvehosts
   tasks:
    - name: Return pvenodes to registered var
-     ansible.builtin.command: pvesh get /nodes --output-format=yaml
+     ansible.builtin.command: pvesh get /nodes --output-format=json
      register: pvenodes
    - name: Display all cluster names
      ansible.builtin.debug:
        var: item
-     loop: "{{ pvenodes.stdout }}"
+     loop: "{{ pvenodes.stdout | from_json }}"
