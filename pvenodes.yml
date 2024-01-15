@@ -6,5 +6,5 @@
      register: pvenodes
    - name: Print the current user
      ansible.builtin.debug:
-       msg: Found nodes: {{ pvenodes | from_yaml }}
+       msg: Found nodes: {{ pvenodes }}
      when: pvenodes is defined
