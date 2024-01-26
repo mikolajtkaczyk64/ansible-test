@@ -10,3 +10,8 @@
        mode: '0755'
    - name: Load the docker image
      ansible.builtin.command: sudo docker load -i /root/orange_alpr_app_latest.tar
+     register: dockeroutput
+   - name: Print the docker output
+     ansible.builtin.debug:
+       msg: {{ dockeroutput }}
+     when: dockeroutput is defined
