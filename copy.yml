@@ -15,3 +15,10 @@
      ansible.builtin.debug:
        msg: "{{ dockeroutput }}"
      when: dockeroutput is defined
+   - name: Bring up docker compose
+     ansible.builtin.command: sudo docker compose up -d -f /home/ubuntu/ai_edge/docker-compose.yml
+     register: dockercompose
+   - name: Print the docker compose output
+     ansible.builtin.debug:
+       msg: "{{ dockercompose }}"
+     when: dockercompose is defined
