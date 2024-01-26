@@ -1,0 +1,10 @@
+- name: Copy file from local to remote host
+  hosts: pvehosts
+  tasks:
+   - name: Copy test file to host location
+     ansible.builtin.copy: 
+       src: /home/semaphore/text.txt
+       dest: /root/text.txt
+       owner: 0
+       group: 0
+       mode: '0755'
