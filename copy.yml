@@ -1,10 +1,12 @@
-- name: Copy file from local to remote host
-  hosts: pvehosts
+- name: Copy file from local to remote VM
+  hosts: pvevms
   tasks:
-   - name: Copy test file to host location
+   - name: Copy test file to VM location
      ansible.builtin.copy: 
-       src: /home/semaphore/text.txt
-       dest: /root/text.txt
+       src: /home/semaphore/files/orange_alpr_app_latest.tar
+       dest: /root/orange_alpr_app_latest.tar
        owner: 0
        group: 0
        mode: '0755'
+   - name: Load the docker image
+     ansible.builtin.command: sudo docker load -i /root/orange_alpr_app_latest.tar
