@@ -21,10 +21,11 @@
        - driver: "blacklist nvidia"
        - driver: "blacklist nouveau"
        - driver: "blacklist radeon"
-   - name: Print blacklist.conf
+   - name: get blacklist.conf to variable
      ansible.builtin.command: cat /etc/modprobe.d/blacklist.conf
      register: blacklist
-     ansible.builtin.debug:
+   - name: Print blacklist.conf
+      ansible.builtin.debug:
        msg: "{{blacklist}}"
    - name: Update initramfs
      ansible.builtin.command: update-initramfs -u
