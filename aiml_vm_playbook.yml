@@ -49,6 +49,9 @@
      ansible.builtin.command: 'echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf'
      with_items:
        - ids: lspci_string
+   - name: Print lspci_string
+     ansible.builtin.debug:
+       msg: "{{lspci_string}}"
    - name: enable IOMMU interrupt remapping
      ansible.builtin.command: echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
    - name: Reboot
