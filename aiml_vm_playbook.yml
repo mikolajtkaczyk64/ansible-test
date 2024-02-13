@@ -13,38 +13,38 @@
       line='GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
       backrefs=yes
    - name: Update GRUB
-      command: update grub
+     ansible.builtin.command: update grub
    - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
-      command: "echo {{ item.driver }} >> /etc/modprobe.d/blacklist.conf"
-      with_items:
-        - driver: "blacklist nvidia"
-        - driver: "blacklist nouveau"
-        - driver: "blacklist radeon"
+     ansible.builtin.command: "echo {{ item.driver }} >> /etc/modprobe.d/blacklist.conf"
+     with_items:
+       - driver: "blacklist nvidia"
+       - driver: "blacklist nouveau"
+       - driver: "blacklist radeon"
  #  - debug:
  #    msg: "{{cat 
    - name: Update initramfs
-      shell: update-initramfs -u
+     ansible.builtin.command: update-initramfs -u
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
-      command: "echo {{ item.variable }} >> /etc/modules"
-      with_items:
-        - variable: "vfio"
-        - variable: "vfio_iommu_type1"
-        - variable: "vfio_pci"
-        - variable: "vfio_virqfd"
+     command: "echo {{ item.variable }} >> /etc/modules"
+     with_items:
+       - variable: "vfio"
+       - variable: "vfio_iommu_type1"
+       - variable: "vfio_pci"
+       - variable: "vfio_virqfd"
    - name: Get GeForce RTX address and IDs
-      shell:  lspci -n -s 01:00
-      register: lspci_output
+     shell:  lspci -n -s 01:00
+     register: lspci_output
    - set_fact:
-      lspci_list: "{{ lspci_output.stdout | regex_search('[A-Za-z0-9]+:[A-Za-z0-9]+ \(rev a1\)')}}"
+     lspci_list: "{{ lspci_output.stdout | regex_search('[A-Za-z0-9]+:[A-Za-z0-9]+ \(rev a1\)')}}"
    - set_fact: lspci_list to string
-      lspci_string: "{{ lspci_list | join(', ') }}"
+     lspci_string: "{{ lspci_list | join(', ') }}"
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
-      command: 'echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf'
-      with_items:
-        - ids: lspci_string
+     command: 'echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf'
+     with_items:
+       - ids: lspci_string
    - name: enable IOMMU interrupt remapping
-      command: echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
+     command: echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
    - name: Reboot
-      ansible.builtin.reboot:
+     ansible.builtin.reboot:
 
 
