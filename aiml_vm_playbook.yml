@@ -1,11 +1,11 @@
 ---
 - name: playbook for proxmox hipervisior and VM for AM/ML Edge Platform
   hosts: pvehosts
-  user: ubuntu
-  become: yes
-  connection: ssh
+#  user: ubuntu
+#  become: yes
+#  connection: ssh
 #  debuger: on_failed
-  gather_facs: yes
+#  gather_facs: yes
   tasks:
    - name: Change GRUB config
      lineinfile:
