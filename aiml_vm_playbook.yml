@@ -7,7 +7,7 @@
   gather_facs: yes
   tasks:
    - name: Change GRUB config
-      shell: sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT.*/& quiet intel_iommu=on efifb=off/'  /etc/default/grub
+      lineinfile: dest="/etc/default/grub" regexp='GRUB_CMDLINE_LINUX_DEFAULT="(.*)"' line='GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"' backrefs=yes
    - name: Update GRUB
       shell: update grub
    - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
