@@ -20,8 +20,11 @@
        - driver: "blacklist nvidia"
        - driver: "blacklist nouveau"
        - driver: "blacklist radeon"
- #  - debug:
- #    msg: "{{cat 
+   - name: Print blacklist.conf
+     ansible.builtin.command: cat /etc/modprobe.d/blacklist.conf
+     register: blacklist
+     ansible.builtin.debug:
+       msg: "{{blacklist}}"
    - name: Update initramfs
      ansible.builtin.command: update-initramfs -u
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
