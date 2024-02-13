@@ -9,7 +9,7 @@
   tasks:
    - name: Change GRUB config
      lineinfile:
-      dest='"/etc/default/grub"'
+      dest="/etc/default/grub"
       regexp='GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
       line='GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
       backrefs=yes
