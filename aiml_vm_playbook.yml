@@ -40,11 +40,11 @@
      ansible.builtin.command:  lspci -n -s 01:00
      register: lspci_output
    - name: Get lspci list
-     set_fact:
-     lspci_list: "{{ lspci_output.stdout | regex_search('[A-Za-z0-9]+:[A-Za-z0-9]')}}"
+     ansible.builtin.set_fact:
+       lspci_list: "{{ lspci_output.stdout | regex_search('[A-Za-z0-9]+:[A-Za-z0-9]')}}"
    - name: lspci_list to string
-     set_fact:
-     lspci_string: "{{ lspci_list | join(', ') }}"
+     ansible.builtin.set_fact:
+       lspci_string: "{{ lspci_list | join(', ') }}"
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
      ansible.builtin.command: 'echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf'
      with_items:
