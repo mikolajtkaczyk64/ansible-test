@@ -24,8 +24,8 @@
        backrefs: true
      notify: update-grub
 
-   - name: Print GRUB config
-     ansible.builtin.command: cat /etc/default/grub
+   - name: Get GRUB config
+     ansible.builtin.shell: cat /etc/default/grub
      register: grub
    - name: Print the grub output
      ansible.builtin.debug:
