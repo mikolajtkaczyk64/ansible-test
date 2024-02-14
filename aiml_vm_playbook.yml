@@ -19,7 +19,7 @@
      ansible.builtin.lineinfile:
        path: "/etc/default/grub"
        regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
-       line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
+       line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on efifb=off"'
    - name: Update GRUB
      ansible.builtin.command: update-grub
    - name: Get GRUB config
@@ -29,13 +29,17 @@
      ansible.builtin.debug:
        msg: "{{ grub }}"
    - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
-     ansible.builtin.command: echo {{ item.driver }} >> /etc/modprobe.d/blacklist.conf
+     ansible.builtin.lineinfile:
+       path: "/etc/modprobe.d/pve-blacklist.conf"
+       line: "{{driver}}"
+       create: yes
+#     ansible.builtin.command: echo {{ item.driver }} >> /etc/modprobe.d/pve-blacklist.conf
      with_items:
        - driver: "blacklist nvidia"
        - driver: "blacklist nouveau"
        - driver: "blacklist radeon"
    - name: get blacklist.conf to variable
-     ansible.builtin.command: cat /etc/modprobe.d/blacklist.conf
+     ansible.builtin.command: cat /etc/modprobe.d/pve-blacklist.conf
      register: blacklist
    - name: Print blacklist.conf
      ansible.builtin.debug:
