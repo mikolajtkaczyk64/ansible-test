@@ -58,7 +58,7 @@
      ansible.builtin.debug:
        msg: "{{ modules }}"
    - name: Get GeForce RTX address and IDs
-     ansible.builtin.command: lspci -n -s 01:00 | awk '{print $3}'
+     ansible.builtin.command: "lspci -n -s 01:00 | awk '{print $3}'"
      register: lspci_output
    - name: Print lspci_output
      ansible.builtin.debug:
