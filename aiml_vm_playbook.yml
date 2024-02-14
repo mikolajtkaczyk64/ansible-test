@@ -7,14 +7,6 @@
 #  debuger: on_failed
 #  gather_facs: yes
   tasks:
-#   - name: Change GRUB config
-#     lineinfile:
-#      dest="/etc/default/grub"
-#      regexp='GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
-#      line='GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
-#      backrefs=yes
-#   - name: Update GRUB
-#     ansible.builtin.command: update-grub -y
    - name: Enable IOMMU
      ansible.builtin.lineinfile:
        path: /etc/default/grub
@@ -23,7 +15,6 @@
        backup: true
        backrefs: true
      notify: update-grub
-
    - name: Get GRUB config
      ansible.builtin.shell: cat /etc/default/grub
      register: grub
@@ -45,18 +36,24 @@
    - name: Update initramfs
      ansible.builtin.command: update-initramfs -u
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
-     command: "echo {{ item.variable }} >> /etc/modules"
+     ansible.builtin.command: echo {{ item.variable }} >> /etc/modules
      with_items:
        - variable: "vfio"
        - variable: "vfio_iommu_type1"
        - variable: "vfio_pci"
        - variable: "vfio_virqfd"
+   - name: Get modules
+     ansible.builtin.shell: cat /etc/modules
+     register: modles
+   - name: Print the modules output
+     ansible.builtin.debug:
+       msg: "{{ modules }}"
    - name: Get GeForce RTX address and IDs
      ansible.builtin.command:  lspci -n -s 01:00
      register: lspci_output
    - name: Get lspci list
      ansible.builtin.set_fact:
-       lspci_list: "{{ lspci_output.stdout | regex_search('[A-Za-z0-9]+:[A-Za-z0-9]')}}"
+       lspci_list: "{{ lspci_output.stdout | regex_search('ids=\b\w{4}:\w{4}\b')}}"
    - name: lspci_list to string
      ansible.builtin.set_fact:
        lspci_string: "{{ lspci_list | join(', ') }}"
