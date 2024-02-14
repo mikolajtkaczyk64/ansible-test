@@ -20,7 +20,7 @@
    - name: Print the grub output
      ansible.builtin.debug:
        msg: "{{ grub }}"
-   - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
+#   - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
 #     ansible.builtin.lineinfile:
 #       path: "/etc/modprobe.d/pve-blacklist.conf"
 #       line: "{{driver}}"
