@@ -22,7 +22,7 @@
        line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
        backrefs: true
    - name: Update GRUB
-     ansible.builtin.command: update grub
+     ansible.builtin.command: update-grub
    - name: Get GRUB config
      ansible.builtin.shell: cat /etc/default/grub
      register: grub
