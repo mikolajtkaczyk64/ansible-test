@@ -53,7 +53,7 @@
      register: lspci_output
    - name: Get lspci list
      ansible.builtin.set_fact:
-       lspci_list: "{{ lspci_output.stdout | regex_search('ids=\w{4}:\w{4}')}}"
+       lspci_list: "{{ lspci_output.stdout | regex_search('\b\w{4}:\w{4}\b')}}"
    - name: lspci_list to string
      ansible.builtin.set_fact:
        lspci_string: "{{ lspci_list | join(', ') }}"
