@@ -1,6 +1,6 @@
 ---
 - name: playbook for proxmox hipervisior and VM for AM/ML Edge Platform
-  hosts: pvehosts
+  hosts: pvehost12
 #  user: ubuntu
 #  become: yes
 #  connection: ssh
