@@ -29,8 +29,8 @@
    - name: Print to log GRUB config
      ansible.builtin.debug:
        msg: "the value of GRUB config is {{ grub }}"
-  - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
-    ansible.builtin.command: echo {{ item.driver }} >> /etc/modprobe.d/blacklist.conf
+   - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
+     ansible.builtin.command: echo {{ item.driver }} >> /etc/modprobe.d/blacklist.conf
      with_items:
        - driver: "blacklist nvidia"
        - driver: "blacklist nouveau"
