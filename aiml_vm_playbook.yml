@@ -20,7 +20,6 @@
        path: "/etc/default/grub"
        regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
        line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
-       backrefs: true
    - name: Update GRUB
      ansible.builtin.command: update-grub
    - name: Get GRUB config
