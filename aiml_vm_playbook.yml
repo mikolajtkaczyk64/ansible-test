@@ -44,7 +44,7 @@
        - variable: "vfio_virqfd"
    - name: Get modules
      ansible.builtin.shell: cat /etc/modules
-     register: modles
+     register: modules
    - name: Print the modules output
      ansible.builtin.debug:
        msg: "{{ modules }}"
