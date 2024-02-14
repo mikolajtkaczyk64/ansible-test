@@ -7,14 +7,6 @@
 #  debuger: on_failed
 #  gather_facs: yes
   tasks:
-#   - name: Enable IOMMU
-#     ansible.builtin.lineinfile:
-#       path: /etc/default/grub
-#       regexp: '^GRUB_CMDLINE_LINUX_DEFAULT="((?:(?!quiet intel_iommu=on efifb=off).)*?)"$'
-#       line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet intel_iommu=on efifb=off"'
-#       backup: true
-#       backrefs: true
- #    notify: update-grub
    - name: Change GRUB config
      ansible.builtin.lineinfile:
        path: "/etc/default/grub"
