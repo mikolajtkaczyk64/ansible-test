@@ -55,12 +55,10 @@
      ansible.builtin.debug:
        msg: "{{lspci_output}}"
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
-     ansible.builtin.command: 'echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf'
+     ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
      with_items:
-       - ids: lspci_lspci_output
+       - ids: lspci_output
    - name: enable IOMMU interrupt remapping
      ansible.builtin.command: echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
    - name: Reboot
      ansible.builtin.reboot:
-
-
