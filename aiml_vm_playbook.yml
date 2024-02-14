@@ -20,12 +20,6 @@
    - name: Print the grub output
      ansible.builtin.debug:
        msg: "{{ grub }}"
-#   - name: Add the Nvidia drivers to the blacklist to prevent them from being loaded by Proxmox
-#     ansible.builtin.lineinfile:
-#       path: "/etc/modprobe.d/pve-blacklist.conf"
-#       line: "{{driver}}"
-#       create: yes
-#     ansible.builtin.command: echo {{ item.driver }} >> /etc/modprobe.d/pve-blacklist.conf
    - name: Remove a line
      lineinfile:
        path: "/etc/modprobe.d/pve-blacklist.conf"
@@ -35,7 +29,6 @@
        - driver: "blacklist nvidia"
        - driver: "blacklist nouveau"
        - driver: "blacklist radeon"
-
    - name: get blacklist.conf to variable
      ansible.builtin.command: cat /etc/modprobe.d/pve-blacklist.conf
      register: blacklist
