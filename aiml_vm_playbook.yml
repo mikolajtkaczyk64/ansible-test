@@ -20,16 +20,16 @@
    - name: Print the grub output
      ansible.builtin.debug:
        msg: "{{ grub }}"
-   - name: Remove a line
+   - name: Add to blacklist
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/pve-blacklist.conf"
        search_string: "{{item.driver}}"
        line: "{{item.driver}}"
-     with_items:
-       - driver: "blacklist nvidia"
-       - driver: "blacklist nouveau"
-       - driver: "blacklist radeon"
-       - driver: "blacklist nvidiafb"
+     loop:
+       - { driver: "blacklist nvidia" }
+       - { driver: "blacklist nouveau" }
+       - { driver: "blacklist radeon" }
+       - { driver: "blacklist nvidiafb" }
    - name: get blacklist.conf to variable
      ansible.builtin.command: cat /etc/modprobe.d/pve-blacklist.conf
      register: blacklist
@@ -73,7 +73,7 @@
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/vfio.conf"
        search_string: "{{item.ids}}"
-       line: "{{item.ids}}"
+       line: options vfio-pci ids="{{item.ids[1:-2]}}"
  #    ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
      with_items:
        - ids: "{{lspci_output.stdout_lines}}"
