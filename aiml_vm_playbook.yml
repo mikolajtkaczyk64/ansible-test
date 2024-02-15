@@ -76,7 +76,7 @@
        line: "{{item.ids}}"
  #    ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
      with_items:
-       - ids: "{{lspci_output}}"
+       - ids: "{{lspci_output.stdout_lines}}"
    - name: Create iommu_unsafe_interrupts.conf.conf file only when it does not exists
      copy:
        content: ""
