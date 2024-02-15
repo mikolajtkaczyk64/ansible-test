@@ -35,7 +35,7 @@
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/pve-blacklist.conf"
        line: "{{ item.driver }}"
-     when: not blacklist_check.results | selectattr('rc', 'eq', 0) | list
+     when: item is defined and not blacklist_check.results | selectattr('rc', 'eq', 0) | list
      loop: "{{ blacklist_check.results }}"
 ##
    - name: get blacklist.conf to variable
@@ -61,7 +61,7 @@
      ansible.builtin.lineinfile:
        path: "/etc/modules"
        line: "{{ item.vfunction }}"
-     when: not vfio_check.results | selectattr('rc', 'eq', 0) | list
+     when: item is defined and not vfio_check.results | selectattr('rc', 'eq', 0) | list
      loop: "{{ vfio_check.results }}"
 ##
    - name: Get modules
