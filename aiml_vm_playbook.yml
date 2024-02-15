@@ -64,6 +64,7 @@
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/vfio.conf"
+       state: present
        search_string: "{{item.ids}}"
        line: "{{item.ids}}"
 #    ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
