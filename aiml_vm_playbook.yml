@@ -20,31 +20,16 @@
    - name: Print the grub output
      ansible.builtin.debug:
        msg: "{{ grub }}"
-#
-   - name: Check if driver in blacklist
-     ansible.builtin.shell: grep -q "{{ item.driver }}" /etc/modprobe.d/pve-blacklist.conf
-     register: blacklist_check
-     ignore_errors: yes
-     changed_when: false
-     loop:
-       - driver: "blacklist nvidia"
-       - driver: "blacklist nouveau"
-       - driver: "blacklist radeon"
-       - driver: "blacklist nvidiafb"
-
-   - name: Append missing drivers to blacklist
+   - name: Add to blacklist
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/pve-blacklist.conf"
-       line: "{{ item.driver }}"
-     when: blacklist_check is succeeded and item not in blacklist_check.results | map(attribute='item.driver') | list
+       search_string: "{{item.driver}}"
+       line: "{{item.driver}}"
      loop:
-       - driver: "blacklist nvidia"
-       - driver: "blacklist nouveau"
-       - driver: "blacklist radeon"
-       - driver: "blacklist nvidiafb"
-     changed_when: true
-
-##
+       - { driver: "blacklist nvidia" }
+       - { driver: "blacklist nouveau" }
+       - { driver: "blacklist radeon" }
+       - { driver: "blacklist nvidiafb" }
    - name: get blacklist.conf to variable
      ansible.builtin.command: cat /etc/modprobe.d/pve-blacklist.conf
      register: blacklist
@@ -53,37 +38,22 @@
        msg: "{{blacklist}}"
    - name: Update initramfs
      ansible.builtin.command: update-initramfs -u
-#
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
-     ansible.builtin.shell: grep -q "{{ item }}" /etc/modules
-     register: vfio_check
-     ignore_errors: yes
-     changed_when: false
-     loop:
-       - "vfio"
-       - "vfio_iommu_type1"
-       - "vfio_pci"
-       - "vfio_virqfd"
-
-   - name: Append vfio modules to /etc/modules if not present
      ansible.builtin.lineinfile:
        path: "/etc/modules"
-       line: "{{ item }}"
-     when: vfio_check is succeeded and item not in vfio_check.results | map(attribute='cmd') | list
-     loop:
-       - "vfio"
-       - "vfio_iommu_type1"
-       - "vfio_pci"
-       - "vfio_virqfd"
-     changed_when: true
-##
+       search_string: "{{item.vfunction}}"
+       line: "{{item.vfunction}}"
+     with_items:
+       - vfunction: "vfio"
+       - vfunction: "vfio_iommu_type1"
+       - vfunction: "vfio_pci"
+       - vfunction: "vfio_virqfd"
    - name: Get modules
      ansible.builtin.shell: cat /etc/modules
      register: modules
    - name: Print the modules output
      ansible.builtin.debug:
        msg: "{{ modules }}"
-#
    - name: Get GeForce RTX address and IDs
      ansible.builtin.shell: lspci -n -s 01:00 | awk 'BEGIN { ORS=", " }; {print $3}'
      register: lspci_output_raw
@@ -93,7 +63,6 @@
    - name: Print lspci_output
      ansible.builtin.debug:
        msg: "{{lspci_output}}"
-##
    - name: Create vfio.conf file only when it does not exists
      copy:
        content: ""
