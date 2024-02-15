@@ -61,7 +61,7 @@
    - name: Print lspci_output
      ansible.builtin.debug:
        msg: "{{lspci_output}}"
-   - name: create vfio.conf file only when it does not exists
+   - name: Create vfio.conf file only when it does not exists
      copy:
        content: ""
        dest: /etc/modprobe.d/vfio.conf
@@ -78,6 +78,14 @@
 #    ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
      with_items:
        - ids: lspci_output
+   - name: Create iommu_unsafe_interrupts.conf.conf file only when it does not exists
+     copy:
+       content: ""
+       dest: /etc/modprobe.d/iommu_unsafe_interrupts.conf
+       force: false
+       group: sys
+       owner: root
+       mode: 0555
    - name: enable IOMMU interrupt remapping
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/iommu_unsafe_interrupts.conf"
