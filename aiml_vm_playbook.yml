@@ -21,7 +21,7 @@
      ansible.builtin.debug:
        msg: "{{ grub }}"
    - name: Remove a line
-     lineinfile:
+     ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/pve-blacklist.conf"
        search_string: "{{item.driver}}"
        line: "{{item.driver}}"
@@ -39,7 +39,7 @@
    - name: Update initramfs
      ansible.builtin.command: update-initramfs -u
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
-     lineinfile:
+     ansible.builtin.lineinfile:
        path: "/etc/modules"
        search_string: "{{item.vfio}}"
        line: "{{item.vfio}}"
@@ -62,7 +62,7 @@
      ansible.builtin.debug:
        msg: "{{lspci_output}}"
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
-       lineinfile:
+       ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/vfio.conf"
        search_string: "{{item.ids}}"
        line: "{{item.ids}}"
@@ -70,7 +70,7 @@
      with_items:
        - ids: lspci_output
    - name: enable IOMMU interrupt remapping
-     lineinfile:
+     ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/iommu_unsafe_interrupts.conf"
        search_string: "{{item.variable}}"
        line: "{{item.variable}}"
