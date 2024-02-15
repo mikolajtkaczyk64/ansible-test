@@ -103,7 +103,7 @@
        search_string: "{{item.ids}}"
        line: options vfio-pci ids="{{item.ids}}"
      with_items:
-       - ids: "{{lspci_output.stdout_lines}}"
+       - ids: "{{lspci_output}}"
    - name: Create iommu_unsafe_interrupts.conf.conf file only when it does not exists
      copy:
        content: ""
