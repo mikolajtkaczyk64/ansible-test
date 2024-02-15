@@ -61,6 +61,14 @@
    - name: Print lspci_output
      ansible.builtin.debug:
        msg: "{{lspci_output}}"
+   - name: create vfio.conf file only when it does not exists
+     copy:
+       content: ""
+       dest: /etc/modprobe.d/vfio.conf
+       force: false
+       group: sys
+       owner: root
+       mode: 0555
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/vfio.conf"
