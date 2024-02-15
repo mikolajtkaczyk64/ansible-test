@@ -41,13 +41,13 @@
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
      ansible.builtin.lineinfile:
        path: "/etc/modules"
-       search_string: "{{item.vfio}}"
-       line: "{{item.vfio}}"
+       search_string: "{{item.vfunction}}"
+       line: "{{item.vfunction}}"
      with_items:
-       - vfio: "vfio"
-       - vfio: "vfio_iommu_type1"
-       - vfio: "vfio_pci"
-       - vfio: "vfio_virqfd"
+       - vfunction: "vfio"
+       - vfunction: "vfio_iommu_type1"
+       - vfunction: "vfio_pci"
+       - vfunction: "vfio_virqfd"
 #     ansible.builtin.command: echo {{ item.variable }} >> /etc/modules
    - name: Get modules
      ansible.builtin.shell: cat /etc/modules
@@ -73,11 +73,8 @@
      ansible.builtin.lineinfile:
        path: "/etc/modprobe.d/vfio.conf"
        search_string: "{{item.ids}}"
-       line: "{{item.ids}}"
-       create: yes
+       line: "{{lspci_output}}"
 #    ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
-     with_items:
-       - ids: lspci_output
    - name: Create iommu_unsafe_interrupts.conf.conf file only when it does not exists
      copy:
        content: ""
