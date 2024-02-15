@@ -22,26 +22,26 @@
        msg: "{{ grub }}"
 #
    - name: Check if driver in blacklist
-      ansible.builtin.shell: grep -q "{{ item.driver }}" /etc/modprobe.d/pve-blacklist.conf
-      register: blacklist_check
-      ignore_errors: yes
-      changed_when: false
-      loop:
-         - driver: "blacklist nvidia"
-         - driver: "blacklist nouveau"
-         - driver: "blacklist radeon"
-         - driver: "blacklist nvidiafb"
+     ansible.builtin.shell: grep -q "{{ item.driver }}" /etc/modprobe.d/pve-blacklist.conf
+     register: blacklist_check
+     ignore_errors: yes
+     changed_when: false
+     loop:
+       - driver: "blacklist nvidia"
+       - driver: "blacklist nouveau"
+       - driver: "blacklist radeon"
+       - driver: "blacklist nvidiafb"
 
    - name: Append missing drivers to blacklist
-      ansible.builtin.lineinfile:
-         path: "/etc/modprobe.d/pve-blacklist.conf"
-         line: "{{ item.driver }}"
-      when: blacklist_check is succeeded and item not in blacklist_check.results | map(attribute='item.driver') | list
-      loop:
-         - driver: "blacklist nvidia"
-         - driver: "blacklist nouveau"
-         - driver: "blacklist radeon"
-         - driver: "blacklist nvidiafb"
+     ansible.builtin.lineinfile:
+       path: "/etc/modprobe.d/pve-blacklist.conf"
+       line: "{{ item.driver }}"
+     when: blacklist_check is succeeded and item not in blacklist_check.results | map(attribute='item.driver') | list
+     loop:
+       - driver: "blacklist nvidia"
+       - driver: "blacklist nouveau"
+       - driver: "blacklist radeon"
+       - driver: "blacklist nvidiafb"
 
 ##
    - name: get blacklist.conf to variable
@@ -54,22 +54,22 @@
      ansible.builtin.command: update-initramfs -u
 #
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
-      ansible.builtin.shell: grep -q "{{ item }}" /etc/modules
-      register: vfio_check
-      ignore_errors: yes
-      changed_when: false
-      loop:
-         - "vfio"
-         - "vfio_iommu_type1"
-         - "vfio_pci"
-         - "vfio_virqfd"
+     ansible.builtin.shell: grep -q "{{ item }}" /etc/modules
+     register: vfio_check
+     ignore_errors: yes
+     changed_when: false
+     loop:
+       - "vfio"
+       - "vfio_iommu_type1"
+       - "vfio_pci"
+       - "vfio_virqfd"
 
    - name: Append vfio modules to /etc/modules if not present
-      ansible.builtin.lineinfile:
-         path: "/etc/modules"
-         line: "{{ item }}"
-      when: item is defined and not vfio_check.results | selectattr('rc', 'eq', 0) | list
-      loop: "{{ vfio_check.results }}"
+     ansible.builtin.lineinfile:
+       path: "/etc/modules"
+       line: "{{ item }}"
+     when: item is defined and not vfio_check.results | selectattr('rc', 'eq', 0) | list
+     loop: "{{ vfio_check.results }}"
 
 ##
    - name: Get modules
