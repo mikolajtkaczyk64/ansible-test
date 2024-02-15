@@ -40,7 +40,7 @@
      ansible.builtin.command: update-initramfs -u
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
      ansible.builtin.lineinfile:
-       path: /etc/modules
+       path: "/etc/modules.txt"
        search_string: "{{item.vfio}}"
        line: "{{item.vfio}}"
      with_items:
@@ -48,16 +48,7 @@
        - vfio: "vfio_iommu_type1"
        - vfio: "vfio_pci"
        - vfio: "vfio_virqfd"
-#     ansible.builtin.lineinfile:
-#       path: "/etc/modules"
-#       search_string: "{{item.vfio}}"
-#       line: "{{item.vfio}}"
-##     ansible.builtin.command: echo {{ item.variable }} >> /etc/modules
-#     with_items:
-#       - vfio: "vfio"
-#       - vfio: "vfio_iommu_type1"
-#       - vfio: "vfio_pci"
-#       - vfio: "vfio_virqfd"
+#     ansible.builtin.command: echo {{ item.variable }} >> /etc/modules
    - name: Get modules
      ansible.builtin.shell: cat /etc/modules
      register: modules
