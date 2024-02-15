@@ -29,6 +29,7 @@
        - driver: "blacklist nvidia"
        - driver: "blacklist nouveau"
        - driver: "blacklist radeon"
+       - driver: "blacklist nvidiafb"
    - name: get blacklist.conf to variable
      ansible.builtin.command: cat /etc/modprobe.d/pve-blacklist.conf
      register: blacklist
@@ -38,12 +39,16 @@
    - name: Update initramfs
      ansible.builtin.command: update-initramfs -u
    - name: Add Virtual Function IO (vfio) kernel modules to load at boot time
-     ansible.builtin.command: echo {{ item.variable }} >> /etc/modules
+     lineinfile:
+       path: "/etc/modules"
+       search_string: "{{item.vfio}}"
+       line: "{{item.vfio}}"
+#     ansible.builtin.command: echo {{ item.variable }} >> /etc/modules
      with_items:
-       - variable: "vfio"
-       - variable: "vfio_iommu_type1"
-       - variable: "vfio_pci"
-       - variable: "vfio_virqfd"
+       - vfio: "vfio"
+       - vfio: "vfio_iommu_type1"
+       - vfio: "vfio_pci"
+       - vfio: "vfio_virqfd"
    - name: Get modules
      ansible.builtin.shell: cat /etc/modules
      register: modules
@@ -51,16 +56,26 @@
      ansible.builtin.debug:
        msg: "{{ modules }}"
    - name: Get GeForce RTX address and IDs
-     ansible.builtin.shell: lspci -n -s 01:00 | awk '{print $3}'
+     ansible.builtin.shell: lspci -n -s 01:00 | awk 'BEGIN { ORS=", " }; {print $3}'
      register: lspci_output
    - name: Print lspci_output
      ansible.builtin.debug:
        msg: "{{lspci_output}}"
    - name: Assign the GeForce RTX to the Virtual Function IO (vfio)
-     ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
+       lineinfile:
+       path: "/etc/modprobe.d/vfio.conf"
+       search_string: "{{item.ids}}"
+       line: "{{item.ids}}"
+#    ansible.builtin.command: echo "options vfio-pci ids={{item.ids}}" > /etc/modprobe.d/vfio.conf
      with_items:
        - ids: lspci_output
    - name: enable IOMMU interrupt remapping
-     ansible.builtin.command: echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
+     lineinfile:
+       path: "/etc/modprobe.d/iommu_unsafe_interrupts.conf"
+       search_string: "{{item.variable}}"
+       line: "{{item.variable}}"
+#     ansible.builtin.command: echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
+     with_items:
+       - variable: "options vfio_iommu_type1 allow_unsafe_interrupts=1"
    - name: Reboot
      ansible.builtin.reboot:
