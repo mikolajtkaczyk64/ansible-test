@@ -1,0 +1,14 @@
+- name: Configure basic fail2ban
+  hosts: "{{ variable_host | default('pvehosts') }}"
+  tasks:
+  - name: Install fail2ban from apt
+    ansible.builtin.apt:
+      name: fail2ban
+      state: present
+  - name: Copy basic configuration to local
+    ansible.builtin.copy: remote_src=True src=/etc/fail2ban/jail.conf dest=/etc/fail2ban.jail.local
+  - name: Start service of fail2ban
+    ansible.builtin.systemd_service:
+      state: started
+      name: fail2ban
+    
