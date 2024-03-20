@@ -7,5 +7,5 @@
   - name: Get PBS storage
     vars:
       - pbs_item: "{{ storage_json.stdout | selectattr('type','==','pbs') }}"
-    ansible.builtin.debug:
-      var: pbs_item
+    debug:
+      msg: "{{ pbs_item }}"
