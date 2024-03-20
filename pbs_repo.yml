@@ -8,4 +8,4 @@
     ansible.builtin.debug:
       var: item
     with_items:
-      - "{{ storange_json.stdout }}"
+      - "{{ storage_json.stdout }}"
