@@ -5,8 +5,7 @@
     ansible.builtin.command: pvesh get storage -o json
     register: storage_json
   - name: Degub print
-    ansible.builtin.debug:
-      var: item
+    meta: end_play
     when: item.fingerprint is defined and item.fingerprint == fingerprint
     with_items:
       - "{{ storage_json.stdout }}"
