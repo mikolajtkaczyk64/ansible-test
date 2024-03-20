@@ -5,7 +5,8 @@
     ansible.builtin.command: pvesh get storage -o json
     register: storage_json
   - name: Get PBS storage
+    ansible.builtin.debug:
+      var: pbs_item
+    when: pbs_item is defined and (pbs_item | length > 0)
     vars:
       - pbs_item: "{{ storage_json.stdout | from_json | selectattr('type','==','pbs') }}"
-    debug:
-      msg: "{{ pbs_item }}"
