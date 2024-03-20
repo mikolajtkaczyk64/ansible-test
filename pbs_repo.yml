@@ -4,7 +4,6 @@
   - name: Get all current storage
     ansible.builtin.command: pvesh get storage -o json
     register: storage_json
-  - name: Loop over data and continue if string was found.
-    fail:
-      msg: "The PBS with fingerprint '{{ fingerprint }}' was not found."
-    when: fingerprint not in (storange_json | from_json) | map(attribute='fingerprint')
+  - name: Degub print
+    ansible.builtin.debug:
+      var: storage_json.stdout
