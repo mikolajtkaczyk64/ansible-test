@@ -2,8 +2,7 @@
   hosts: "{{ variable_host | default('pvehosts') }}"
   tasks:
   - name: Get all current storage
-    ansible.builtin.command:
-      cmd: pvesh get storage --output-format=json
+    ansible.builtin.command: pvesh get storage --output-format=json
       register: storage_json
   - name: Print return information from the previous task
     ansible.builtin.debug:
