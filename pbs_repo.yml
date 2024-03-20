@@ -1,17 +1,10 @@
 - name: Add PBS with basic VM snapshot to PVE node
   hosts: "{{ variable_host | default('pvehosts') }}"
   tasks:
-  - name: Get all current storage
-    ansible.builtin.command: pvesh get storage -o json
-    register: storage_json
-  - name: Check for PBS storage and end host if defined
-    ansible.builtin.meta: end_host
-    when: pbs_item is defined and (pbs_item | length > 0)
-    vars:
-      - pbs_item: "{{ storage_json.stdout | from_json | selectattr('fingerprint','==',fingerprint) }}"
   - name: Create new PBS storage on host with given vars
     ansible.builtin.command: "pvesm add pbs repo_pbs -username {{ username }} -password {{ password }} -fingerprint {{ fingerprint }} -server {{ server }} -datastore {{ datastore }}"
     register: pvesm_output
+    ignore_errors: yes
   - name: Debug PBS definition output
     ansible.builtin.debug:
       var: pvesm_output
