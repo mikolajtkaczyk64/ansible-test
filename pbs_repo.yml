@@ -7,6 +7,6 @@
   - name: Degub print
     ansible.builtin.debug:
       var: item
-    when: item.fingerprint == fingerprint
+    when: item.fingerprint is defined and item.fingerprint == fingerprint
     with_items:
       - "{{ storage_json.stdout }}"
