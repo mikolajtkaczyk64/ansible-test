@@ -4,7 +4,7 @@
   - name: Create new PBS storage on host with given vars
     ansible.builtin.command: "pvesm add pbs repo_pbs -username {{ username }} -password {{ password }} -fingerprint {{ fingerprint }} -server {{ server }} -datastore {{ datastore }}"
     register: pvesm_output
-    failed_when: "'already defined' not in pvesm_output.stderr"
+    failed_when: "(pvesm_output.stdout | length > 0) and 'already defined' not in pvesm_output.stderr"
   - name: Debug PBS definition output
     ansible.builtin.debug:
       var: pvesm_output
