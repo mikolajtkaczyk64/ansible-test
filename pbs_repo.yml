@@ -6,4 +6,6 @@
     register: storage_json
   - name: Degub print
     ansible.builtin.debug:
-      var: storage_json.stdout
+      var: item
+    with_items:
+      - "{{ storange_json.stdout }}"
