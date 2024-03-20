@@ -7,4 +7,4 @@
   - name: Loop over data and continue if string was found.
     fail:
       msg: "The PBS with fingerprint '{{ fingerprint }}' was not found."
-    when: fingerprint not in (storange_json.stdout | from_json) | map(attribute='fingerprint')
+    when: fingerprint not in (storange_json | from_json) | map(attribute='fingerprint')
