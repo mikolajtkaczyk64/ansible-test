@@ -6,4 +6,4 @@
     register: storage_json
   - name: Get PBS storage
     ansible.builtin.debug:
-      var: "{{ storage_json.stdout }}"
+      var: storage_json.stdout
