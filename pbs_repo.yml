@@ -4,8 +4,6 @@
   - name: Get all current storage
     ansible.builtin.command: pvesh get storage -o json
     register: storage_json
-  - name: Degub print
-    meta: end_play
-    when: item.fingerprint is defined and item.fingerprint == fingerprint
-    with_items:
-      - "{{ storage_json.stdout }}"
+  - name: Get PBS storage
+    ansible.builtin.debug:
+      var: "{{ storage_json.stdout | selectattr('type','==','pbs') }}"
