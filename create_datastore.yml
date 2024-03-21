@@ -1,0 +1,10 @@
+- name: Create datastore in PBS with user and privileges
+  hosts: "{{ variable_host | default('pbs') }}"
+  tasks:
+  - name: Create new PBS datastore with given name and path
+    ansible.builtin.command: "proxmox-backup-manager datastore create {{ datastore }} {{ {{ datastore | lower }} }}"
+    register: pbm_datastore_create_output
+    failed_when: "(pbm_datastore_create_output.stdout | length > 0) and 'already exists' not in pbm_datastore_create_output.stderr"
+  - name: Debug PBS definition output
+    ansible.builtin.debug:
+      var: pbm_datastore_create_output
