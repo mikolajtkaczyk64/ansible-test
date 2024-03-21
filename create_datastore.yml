@@ -4,7 +4,7 @@
   - name: Create new PBS datastore with given name and path
     ansible.builtin.command: "proxmox-backup-manager datastore create {{ datastore }} /iguard/{{ datastore | lower }}"
     register: pbm_datastore_create_output
-    failed_when: "(pbm_datastore_create_output.stdout | length > 0) and 'already exists' not in pbm_datastore_create_output.stderr"
+    failed_when: "(pbm_datastore_create_output.stderr | length > 0) and 'already exists' not in pbm_datastore_create_output.stderr"
   - name: Debug PBS definition output
     ansible.builtin.debug:
       var: pbm_datastore_create_output
