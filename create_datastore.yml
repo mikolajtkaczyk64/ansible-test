@@ -2,7 +2,7 @@
   hosts: "{{ variable_host | default('pbs') }}"
   tasks:
   - name: Create new PBS datastore with given name and path
-    ansible.builtin.command: "proxmox-backup-manager datastore create {{ datastore }} {{ {{ datastore | lower }} }}"
+    ansible.builtin.command: "proxmox-backup-manager datastore create {{ datastore }} {{ datastore | lower }}"
     register: pbm_datastore_create_output
     failed_when: "(pbm_datastore_create_output.stdout | length > 0) and 'already exists' not in pbm_datastore_create_output.stderr"
   - name: Debug PBS definition output
