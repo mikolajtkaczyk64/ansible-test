@@ -5,6 +5,8 @@
     ansible.builtin.command: "proxmox-backup-manager datastore create {{ datastore }} /iguard/{{ datastore | lower }}"
     register: pbm_datastore_create_output
     failed_when: "(pbm_datastore_create_output.stderr | length > 0) and 'already exists' not in pbm_datastore_create_output.stderr"
-  - name: Debug PBS definition output
-    ansible.builtin.debug:
-      var: pbm_datastore_create_output
+  - name: Create a user for given datastore
+    ansible.builtin.command: "proxmox-backup-manager user create {{ datastore }} --password {{ !QAZxsw2 }}"
+    register: pbm_user_create_output
+    when: "pbm_datastore_create_output.stderr | length > 0"
+    failed_when: "(pbm_user_create_output.stderr | length > 0) and 'already exists' not in pbm_user_create_output.stderr"
