@@ -10,3 +10,5 @@
     register: pbm_user_create_output
     when: "pbm_datastore_create_output.stderr | length > 0"
     failed_when: "(pbm_user_create_output.stderr | length > 0) and 'already exists' not in pbm_user_create_output.stderr"
+  - name: Give a role to the new user
+    ansible.builtin.command: "proxmox-backup-manager acl update /iguard/{{ datastore }} DatastoreBackup --auth-id {{ datastore }}@pbs
