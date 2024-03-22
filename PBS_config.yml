@@ -3,17 +3,17 @@
   hosts: "{{ variable_host | default('pvehosts') }}"
   tasks:
   - name: Create a new PBS datastore and user with permissions
-  ansible.builtin.import_playbook: create_datastore.yml
-  vars:
-    variable_host: "pbs"
-    datastore: "{{ datastore }}"
-    user_password: "{{ user_password }}"
+    ansible.builtin.import_playbook: create_datastore.yml
+    vars:
+      variable_host: "pbs"
+      datastore: "{{ datastore }}"
+      user_password: "{{ user_password }}"
   - name: Add created datastore to PVE
-  ansible.builtin.import_playbook: pbs_repo.yml
-  vars:
-    variable_host: "{{ variable_pve }}"
-    username: "{{ datastore }}@pbs"
-    password: "{{ user_password }}"
-    fingerprint: "{{ fingerprint }}"
-    server: "{{ server }}"
-    datastore: "{{ datastore }}"
+    ansible.builtin.import_playbook: pbs_repo.yml
+    vars:
+      variable_host: "{{ variable_pve }}"
+      username: "{{ datastore }}@pbs"
+      password: "{{ user_password }}"
+      fingerprint: "{{ fingerprint }}"
+      server: "{{ server }}"
+      datastore: "{{ datastore }}"
