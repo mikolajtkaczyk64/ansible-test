@@ -11,7 +11,7 @@
   - name: Add created datastore to PVE
   ansible.builtin.import_playbook: pbs_repo.yml
   vars:
-    variable_host: "pvehosts"
+    variable_host: "{{ variable_pve }}"
     username: "{{ datastore }}@pbs"
     password: "{{ user_password }}"
     fingerprint: "{{ fingerprint }}"
