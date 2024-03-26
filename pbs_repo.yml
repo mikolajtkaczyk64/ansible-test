@@ -2,7 +2,7 @@
   hosts: "{{ variable_host | default('pvehosts') }}"
   tasks:
   - name: Create new PBS storage on host with given vars
-    ansible.builtin.command: "pvesm add pbs repo_pbs -username {{ username }} -password {{ password }} -fingerprint {{ fingerprint }} -server {{ server }} -datastore {{ datastore }}"
+    ansible.builtin.command: "pvesm add pbs {{ storage_name | default('repo_pbs') }} -username {{ username }} -password {{ password }} -fingerprint {{ fingerprint }} -server {{ server }} -datastore {{ datastore }}"
     register: pvesm_output
     failed_when: "(pvesm_output.stdout | length > 0) and 'already defined' not in pvesm_output.stderr"
   - name: Debug PBS definition output
