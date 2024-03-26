@@ -8,7 +8,7 @@
   vars:
     extra_vars:
       variable_host: "{{ variable_pve }}"
-      username: "{{ datastore }}@pbs"
+      username: "{{ datastore + '@pbs' }}"
       password: "{{ user_password }}"
       fingerprint: "{{ fingerprint }}"
       server: "{{ server }}"
