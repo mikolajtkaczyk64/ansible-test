@@ -1,15 +1,13 @@
 - ansible.builtin.import_playbook: create_datastore.yml
   vars:
-    extra_vars:
-      variable_host: "pbs"
-      datastore: "{{ datastore }}"
-      user_password: "{{ user_password }}"
+    variable_host: "pbs"
+    datastore: "{{ datastore }}"
+    user_password: "{{ user_password }}"
 - ansible.builtin.import_playbook: pbs_repo.yml
   vars:
-    extra_vars:
-      variable_host: "{{ variable_pve }}"
-      username: "{{ datastore }}"
-      password: "{{ user_password }}"
-      fingerprint: "{{ fingerprint }}"
-      server: "{{ server }}"
-      datastore: "{{ datastore }}"
+    variable_host: "{{ variable_pve }}"
+    username: "{{ datastore }}"
+    password: "{{ user_password }}"
+    fingerprint: "{{ fingerprint }}"
+    server: "{{ server }}"
+    datastore: "{{ datastore }}"
