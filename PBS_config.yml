@@ -11,3 +11,4 @@
     fingerprint: "{{ fingerprint }}"
     server: "{{ server }}"
     datastore: "{{ datastore }}"
+    storage_name: "files_backup"
