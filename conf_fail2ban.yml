@@ -6,7 +6,7 @@
       name: fail2ban
       state: present
   - name: Copy basic configuration to local
-    ansible.builtin.copy: remote_src=True src=/etc/fail2ban/jail.conf dest=/etc/fail2ban.jail.local
+    ansible.builtin.copy: remote_src=True src=/etc/fail2ban/jail.conf dest=/etc/fail2ban/jail.local
   - name: Start service of fail2ban
     ansible.builtin.systemd_service:
       state: started
