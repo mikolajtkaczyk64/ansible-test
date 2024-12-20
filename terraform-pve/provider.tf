@@ -23,6 +23,6 @@ provider "proxmox" {
   ssh {
     agent    = false
     username = "terraform"
-    private_key = file("/home/semaphore/zotac")
+    private_key = file("/home/semaphore/files/zotac")
   }
 }
