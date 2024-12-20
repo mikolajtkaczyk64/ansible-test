@@ -52,7 +52,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     }
 
     user_account {
-      keys     = [trimspace(tls_private_key.ubuntu_vm_key.public_key_openssh)]
+      keys     = [file("/home/semaphore/files/zotac.pub")]
       password = random_password.ubuntu_vm_password.result
       username = "ubuntu"
     }
@@ -78,11 +78,6 @@ resource "random_password" "ubuntu_vm_password" {
   length           = 16
   override_special = "_%@"
   special          = true
-}
-
-resource "tls_private_key" "ubuntu_vm_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
 }
 
 output "ubuntu_vm_password" {
