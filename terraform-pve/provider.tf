@@ -21,7 +21,8 @@ provider "proxmox" {
   insecure  = true
   tmp_dir  = "/var/tmp"
   ssh {
-    agent    = true
+    agent    = false
     username = "terraform"
+    private_key = file("/home/semaphore/zotac")
   }
 }
