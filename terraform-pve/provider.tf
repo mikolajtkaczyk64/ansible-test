@@ -7,6 +7,14 @@ terraform {
   }
 }
 
+variable "pve_endpoint" {
+  type = string
+}
+
+variable "pve_api_token" {
+  type = string
+}
+
 provider "proxmox" {
   endpoint  = var.pve_endpoint
   api_token = var.pve_api_token
