@@ -86,7 +86,7 @@ resource "tls_private_key" "ubuntu_vm_key" {
 }
 
 output "ubuntu_vm_password" {
-  value     = random_password.ubuntu_vm_password.result
+  value     = nonsensitive(random_password.ubuntu_vm_password.result)
   sensitive = true
 }
 
