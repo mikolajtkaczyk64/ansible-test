@@ -96,7 +96,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
 resource "proxmox_virtual_environment_container" "ubuntu_container" {
   description = "Managed by Terraform"
 
-  node_name = "first-node"
+  node_name = "orange"
   vm_id     = 1234
 
   initialization {
