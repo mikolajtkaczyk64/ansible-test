@@ -106,7 +106,7 @@ resource "proxmox_virtual_environment_container" "ubuntu_container" {
 
   disk {
     datastore_id = "local-lvm"
-    size         = "10G"
+    size         = 10
   }
 
   memory {
