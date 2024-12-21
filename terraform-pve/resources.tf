@@ -119,6 +119,19 @@ resource "proxmox_virtual_environment_container" "ubuntu_container" {
     name = "veth0"
   }
 
+  mount_point {
+    # bind mount, *requires* root@pam authentication
+    volume = "/mnt/bindmounts/shared"
+    path   = "/mnt/shared"
+  }
+
+  mount_point {
+    # volume mount, a new volume will be created by PVE
+    volume = "local-lvm"
+    size   = "10G"
+    path   = "/mnt/volume"
+  }
+
   operating_system {
     template_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_lxc_img.id
     type             = "ubuntu"
