@@ -1,0 +1,130 @@
+- name: Install Docker and initialize a swarm
+  hosts: "{{ variable_host | default('int_swarm') }}"
+  become: true  # Elevates privileges
+  tasks:
+    - name: Install Docker  # Descriptive name for a block of tasks
+      block:  # Groups tasks together
+        - name: Install required packages  # Installs dependencies for Docker and GlusterFS
+          ansible.builtin.apt:  # Uses the apt module for package management
+            name:  # Lists packages to be installed
+              - ca-certificates
+              - curl
+            state: present  # Ensures packages are installed
+            update_cache: true  # Updates the package cache first
+
+    - name: Download Dockers official GPG key  # Adds Docker's GPG key for package verification
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'  # Sets file permissions
+        force: false  # Avoids re-downloading if the file already exists
+
+    - name: Retrieve dpkg architecture  # Gets the system's architecture
+      ansible.builtin.command: dpkg --print-architecture
+      register: dpkg_arch_result  # Saves command output for later use
+      changed_when: false  # Marks the task as not changing the system
+
+    - name: Set dpkg architecture fact  # Saves the architecture as a fact for later use
+      ansible.builtin.set_fact:
+        dpkg_arch: "{{ dpkg_arch_result.stdout }}"
+
+    - name: Retrieve Ubuntu version codename dynamically  # Identifies the Ubuntu version
+      ansible.builtin.shell: |
+        set -o pipefail && grep 'VERSION_CODENAME=' /etc/os-release | cut -d'=' -f2
+      args:
+        executable: /bin/bash
+      register: codename_result
+      changed_when: false
+
+    - name: Set version codename fact dynamically  # Saves the Ubuntu version codename as a fact
+      ansible.builtin.set_fact:
+        version_codename: "{{ codename_result.stdout }}"
+
+    - name: Add Docker to sources list  # Configures apt to use Docker's repository
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list.d/docker.list
+        line: "deb [arch={{ dpkg_arch }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ version_codename }} stable"
+        create: true
+        state: present
+        mode: '0644'
+
+    - name: Update apt-get  # Refreshes the package database
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Docker and plugins  # Installs Docker and related packages
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+- name: Initialize Docker Swarm on first manager
+  hosts: int_swarm_managers[0]  # Targets the first manager in the 'int_swarm_managers' group
+  become: true
+  tasks:
+    - name: Check Docker Swarm status  # Checks if the host is part of a Swarm
+      ansible.builtin.shell: docker info --format '{{ "{{.Swarm.LocalNodeState}}" }}'
+      register: docker_swarm_status
+      changed_when: false
+
+    - name: Initialize Docker Swarm  # Initializes the Swarm if not already active
+      ansible.builtin.shell:
+        cmd: docker swarm init --advertise-addr {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+      when: "'inactive' in docker_swarm_status.stdout"  # Conditional execution
+      register: swarm_init
+      changed_when: "'Swarm initialized' in swarm_init.stdout"
+
+    - name: Retrieve Docker Swarm manager token  # Gets token for joining as a manager
+      ansible.builtin.shell: docker swarm join-token manager -q
+      register: manager_token
+      changed_when: false
+
+    - name: Retrieve Docker Swarm worker token  # Gets token for joining as a worker
+      ansible.builtin.shell: docker swarm join-token worker -q
+      register: worker_token
+      changed_when: false
+
+- name: Join remaining managers to Docker Swarm
+  hosts: int_swarm_managers:!int_swarm_managers[0]
+  become: true
+  tasks:
+    - name: Check Docker Swarm status before attempting to join
+      ansible.builtin.shell: docker info --format '{{ "{{.Swarm.LocalNodeState}}" }}'
+      register: docker_swarm_status
+      changed_when: false
+
+    - name: Join Swarm as manager
+      ansible.builtin.shell:
+        cmd: docker swarm join --token {{ hostvars[groups['int_swarm_managers'][0]]['manager_token'].stdout }} {{ hostvars[groups['int_swarm_managers'][0]]['ansible_default_ipv4']['address'] }}:2377
+      when: hostvars[groups['int_swarm_managers'][0]]['manager_token'].stdout is defined and docker_swarm_status.stdout != "active"
+      register: swarm_join
+      changed_when: "'This node joined a swarm as a manager' in swarm_join.stdout"
+
+    - name: Label Docker Swarm manager nodes  # Applies a label to manager nodes for identification
+      ansible.builtin.shell:
+        cmd: docker node update --label-add manager=true {{ item }}
+      loop: "{{ groups['int_swarm_managers'] }}"
+      loop_control:
+        loop_var: item
+      when: swarm_join is changed
+      changed_when: false
+
+- name: Join workers to Docker Swarm
+  hosts: int_swarm_workers  # Targets the worker nodes in the Swarm
+  become: true
+  tasks:
+    - name: Check if node is part of a swarm  # Verifies if the node is already in a Swarm
+      ansible.builtin.shell: docker info --format '{{ "{{.Swarm.LocalNodeState}}" }}'
+      register: swarm_state
+      changed_when: false
+
+    - name: Join Swarm as worker if not already part of a swarm  # Joins the Swarm as a worker
+      ansible.builtin.shell:
+        cmd: docker swarm join --token {{ hostvars[groups['int_swarm_managers'][0]]['worker_token'].stdout }} {{ hostvars[groups['int_swarm_managers'][0]]['ansible_default_ipv4']['address'] }}:2377
+      when: swarm_state.stdout != 'active'
+      register: swarm_join
+      changed_when: "'This node joined a swarm as a worker' in swarm_join.stdout"
