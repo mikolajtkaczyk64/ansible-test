@@ -99,6 +99,21 @@ resource "proxmox_virtual_environment_container" "ubuntu_container" {
   node_name = "orange"
   vm_id     = 1234
 
+  cpu {
+    architecture = "amd64"
+    cores        = 1
+  }
+
+  disk {
+    datastore_id = "local-lvm"
+    size         = "10G"
+  }
+
+  memory {
+    dedicated = 1024
+    swap      = 0
+  }
+
   initialization {
     hostname = "terraform-provider-proxmox-ubuntu-container"
 
@@ -117,13 +132,6 @@ resource "proxmox_virtual_environment_container" "ubuntu_container" {
 
   network_interface {
     name = "veth0"
-  }
-
-  mount_point {
-    # volume mount, a new volume will be created by PVE
-    volume = "local-lvm"
-    size   = "10G"
-    path   = "/mnt/volume"
   }
 
   operating_system {
