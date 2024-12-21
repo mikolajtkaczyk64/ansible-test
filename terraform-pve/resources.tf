@@ -6,6 +6,25 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_22_04_server_cloudi
   url          = "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
 }
 
+resource "proxmox_virtual_environment_download_file" "latest_ubuntu_22_jammy_lxc_img" {
+  content_type = "vztmpl"
+  datastore_id = "local"
+  node_name    = "orange"
+  url          = "http://download.proxmox.com/images/system/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
+}
+
+resource "random_password" "ubuntu_vm_password" {
+  length           = 16
+  override_special = "_%@"
+  special          = true
+}
+
+resource "random_password" "ubuntu_container_password" {
+  length           = 16
+  override_special = "_%@"
+  special          = true
+}
+
 resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   name        = "terraform-provider-proxmox-ubuntu-vm"
   description = "Managed by Terraform"
@@ -74,10 +93,47 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   serial_device {}
 }
 
-resource "random_password" "ubuntu_vm_password" {
-  length           = 16
-  override_special = "_%@"
-  special          = true
+resource "proxmox_virtual_environment_container" "ubuntu_container" {
+  description = "Managed by Terraform"
+
+  node_name = "first-node"
+  vm_id     = 1234
+
+  initialization {
+    hostname = "terraform-provider-proxmox-ubuntu-container"
+
+    ip_config {
+      ipv4 {
+        address = "10.10.198.106/24"
+        gateway = "10.10.198.1"
+      }
+    }
+
+    user_account {
+      keys     = [file("/home/semaphore/files/zotac.pub")]
+      password = random_password.ubuntu_container_password.result
+    }
+  }
+
+  network_interface {
+    name = "veth0"
+  }
+
+  operating_system {
+    template_file_id = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_lxc_img.id
+    type             = "ubuntu"
+  }
+
+  startup {
+    order      = "3"
+    up_delay   = "60"
+    down_delay = "60"
+  }
+}
+
+output "ubuntu_container_password" {
+  value     = random_password.ubuntu_container_password.result
+  sensitive = true
 }
 
 output "ubuntu_vm_password" {
