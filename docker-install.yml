@@ -129,6 +129,14 @@
       register: swarm_join
       changed_when: "'This node joined a swarm as a worker' in swarm_join.stdout"
 
+- name: Install docker SDK python package
+  hosts: int_swarm_managers[0]
+  become: true
+  tasks:
+    - name: Run pip install
+      ansible.builtin.pip:
+        name: docker
+
 - name: Create a basic Portainer Agent service
   hosts: int_swarm_managers[0]
   become: true
