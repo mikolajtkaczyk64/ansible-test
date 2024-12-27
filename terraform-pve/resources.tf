@@ -2,6 +2,7 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_22_04_server_cloudi
   content_type = "iso"
   datastore_id = "local"
   node_name    = "orange"
+  overwrite_unmanaged = true
   file_name    = "ubuntu-22.04-server-cloudimg-amd64.img"
   url          = "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
 }
@@ -10,6 +11,7 @@ resource "proxmox_virtual_environment_download_file" "latest_ubuntu_22_jammy_lxc
   content_type = "vztmpl"
   datastore_id = "local"
   node_name    = "orange"
+  overwrite_unmanaged = true
   url          = "http://download.proxmox.com/images/system/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
 }
 
