@@ -128,3 +128,29 @@
       when: swarm_state.stdout != 'active'
       register: swarm_join
       changed_when: "'This node joined a swarm as a worker' in swarm_join.stdout"
+
+- name: Create a basic Portainer Agent service
+  hosts: int_swarm_managers[0]
+  become: true
+  tasks:
+    - name: Create overlay network
+      community.docker.docker_network:
+        name: portainer_agent_network
+        driver: "overlay"
+
+    - name: Create a Portainer Agent service
+      community.docker.docker_swarm_service:
+        name: portainer_agent
+        image: portainer/agent:2.19.4
+        mode: "global"
+        networks:
+          - portainer_agent_network
+        publish:
+          - mode: host
+            target_port: 9001
+            published_port: 9001
+        mounts:
+          - source: "/var/run/docker.sock"
+            target: "/var/run/docker.sock"
+          - source: "/var/lib/docker/volumes"
+            target: "/var/lib/docker/volumes"
