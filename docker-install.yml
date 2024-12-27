@@ -137,6 +137,9 @@
     - name: Run pip install
       ansible.builtin.pip:
         name: docker
+    - name: Downgrade requests
+      ansible.builtin.pip:
+        name: requests=2.29.0
 
 - name: Create a basic Portainer Agent service
   hosts: int_swarm_managers[0]
