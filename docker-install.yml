@@ -9,6 +9,7 @@
             name:  # Lists packages to be installed
               - ca-certificates
               - curl
+              - python3-pip
             state: present  # Ensures packages are installed
             update_cache: true  # Updates the package cache first
 
